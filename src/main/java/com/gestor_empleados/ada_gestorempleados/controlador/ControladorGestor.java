@@ -10,10 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 
 public class ControladorGestor implements Initializable{
     private Integer id = 0;
@@ -49,45 +46,77 @@ public class ControladorGestor implements Initializable{
     @FXML
     private TextField txfSueldo;
 
+    @FXML
+    private Label txtInfo;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+    }
+
+    private boolean comprobarCampos(){
         // Límites caracteres TextFields
         int maxLengthNombre = 30;
         int maxLengthApellidos = 60;
         int maxLengthDepartamento = 30;
         double maxLengthSueldo = 99999.99;
 
-        // Configurar los TextFormatter que limite el número de caracteres
-        txfNombre.setTextFormatter(new TextFormatter<String>(change ->
-                change.getControlNewText().length() <= maxLengthNombre ? change : null
-        ));
-        txfApellidos.setTextFormatter(new TextFormatter<String>(change ->
-                change.getControlNewText().length() <= maxLengthApellidos ? change : null
-        ));
-        txfDepartamento.setTextFormatter(new TextFormatter<String>(change ->
-                change.getControlNewText().length() <= maxLengthDepartamento ? change : null
-        ));
-        // Configurar el TextFormatter para validar el sueldo
-        UnaryOperator<TextFormatter.Change> filter = change -> {
-            String newText = change.getControlNewText();
-            // Validar si cumple con la expresión regular
-            if (newText.matches("([0-9]{0,5}(\\.[0-9]{0,2})?)?")) {
-                return change;
+        String info = "Info: ";
+        boolean correcto = true;
+        if (txfNombre.getLength() >= maxLengthNombre){
+            info+= "longitud nombre debe ser inferior a "+maxLengthNombre+"carácteres, ";
+            correcto=false;
+        } else if (txfNombre.getLength() == 0) {
+            info+= "campo nombre está vacío, ";
+            correcto=false;
+        }
+        if (txfApellidos.getLength() >= maxLengthApellidos){
+            info+= "longitud apellidos ser inferior a "+maxLengthApellidos+"carácteres, ";
+            correcto=false;
+        } else if (txfApellidos.getLength() == 0) {
+            info+= "campo apellidos está vacío, ";
+            correcto=false;
+        }
+        if (txfDepartamento.getLength() >= maxLengthDepartamento){
+            info+= "longitud departamento ser inferior a "+maxLengthDepartamento+"carácteres, ";
+            correcto=false;
+        } else if (txfDepartamento.getLength() == 0) {
+            info+= "campo departamento está vacío, ";
+            correcto=false;
+        }
+        if (txfSueldo.getLength() == 0){
+            info+= "campo sueldo está vacío ";
+            correcto=false;
+        }else {
+            try {
+                if (Double.parseDouble(txfSueldo.getText()) >= maxLengthSueldo || Double.parseDouble(txfSueldo.getText()) <= 0){
+                    info+= "sueldo debe ser entre 0 y "+maxLengthSueldo+" euros";
+                    correcto=false;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Error: "+e.getMessage());
+                info+= "sueldo no puede tener letras";
+                correcto=false;
             }
-            return null;
-        };
-        // Establecer el TextFormatter con el filtro y valor inicial
-        TextFormatter<String> formatter = new TextFormatter<>(filter);
-        txfSueldo.setTextFormatter(formatter);
+        }
+
+        txtInfo.setText(info);
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Error");
+        alert.setHeaderText("Datos erroneos:");
+        alert.setContentText(info);
+        alert.showAndWait();
+        return correcto;
     }
 
 
     @FXML
     void insertar(ActionEvent event) {
-        Empleado e = new Empleado(this.id, this.txfNombre.getText(), this.txfApellidos.getText(), this.txfDepartamento.getText(), Double.parseDouble(this.txfSueldo.getText()));
-        lista.add(e);
-        this.id++;
+        if (comprobarCampos()){
+            Empleado e = new Empleado(this.id, this.txfNombre.getText(), this.txfApellidos.getText(), this.txfDepartamento.getText(), Double.parseDouble(this.txfSueldo.getText()));
+            lista.add(e);
+            this.id++;
+        }
     }
 
     @FXML
@@ -97,7 +126,9 @@ public class ControladorGestor implements Initializable{
 
     @FXML
     void actualizar(ActionEvent event) {
+        if (comprobarCampos()){
 
+        }
     }
 
 
