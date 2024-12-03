@@ -7,5 +7,6 @@ module com.gestor_empleados.ada_gestorempleados {
 
     opens com.gestor_empleados.ada_gestorempleados to javafx.fxml;
     opens com.gestor_empleados.ada_gestorempleados.controlador to javafx.fxml;
+    opens com.gestor_empleados.ada_gestorempleados.modelo to javafx.base;
     exports com.gestor_empleados.ada_gestorempleados;
 }

@@ -11,9 +11,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ControladorGestor implements Initializable{
-    private Integer id = 0;
+    // Ruta al archivo config.properties
+    String filePath = "src/resources/config.properties";
+    private int id = 0;
     private ObservableList<Empleado> lista = FXCollections.observableArrayList();
 
     @FXML
@@ -51,7 +54,12 @@ public class ControladorGestor implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        c1.setCellValueFactory(new PropertyValueFactory<>("id"));
+        c2.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        c3.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
+        c4.setCellValueFactory(new PropertyValueFactory<>("departamento"));
+        c5.setCellValueFactory(new PropertyValueFactory<>("sueldo"));
+        tableView.setItems(lista);
     }
 
     private boolean comprobarCampos(){
@@ -101,11 +109,13 @@ public class ControladorGestor implements Initializable{
         }
 
         txtInfo.setText(info);
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Error");
-        alert.setHeaderText("Datos erroneos:");
-        alert.setContentText(info);
-        alert.showAndWait();
+        if (!correcto){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setHeaderText("Datos erroneos:");
+            alert.setContentText(info);
+            alert.showAndWait();
+        }
         return correcto;
     }
 
